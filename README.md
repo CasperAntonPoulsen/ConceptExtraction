@@ -35,6 +35,10 @@ or run manually:
 ```
 pip install -r requirements.txt
 python download_models.py
+
+link: https://docs.google.com/uc?export=download&id=1tKQkCEO-TasGVrunkNWhuaJSP9khobph
+
+
 ```
 
 Step 5. Install torch from https://pytorch.org/
