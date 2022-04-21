@@ -19,7 +19,7 @@ class TextTokenizer:
             text_str = text_str.decode("utf8").strip()
             text_str = re.sub("``", "\"", text_str)
             text_str = re.sub("''", "\"", text_str)
-            tokenized_text = TokenizedText()
+            tokenized_text = TokenizedText("da")
             tokenized_text.create_from_text(text_str)
             output_dict["sentence_list"].extend([{"token_list": [{"token": token.token, "tag": token.postag,
                                                                   "beg_offset": token.beg_offset,

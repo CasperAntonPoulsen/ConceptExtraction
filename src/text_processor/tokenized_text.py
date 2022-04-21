@@ -1,6 +1,7 @@
 import re
 import nltk
 import nltk.data
+import spacy
 
 import ssl
 try:
@@ -29,9 +30,22 @@ class TokenizedText:
     Contains a list of sentences where a sentence is a list of tokens (instances of a class Token)
     """
     
-    def __init__(self, ):
+    def __init__(self, lang):
         self.sentences = []
-        self.sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+        self.lang = lang
+        if lang == "en":
+            self.sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+        elif lang == "da":
+            self.sent_detector = spacy.load("da_core_news_sm")
+
+    def spacy_sent_detector(self, text_str):
+        return [sent for sent in self.sent_detector(text_str).sents]
+
+    def spacy_word_tokenize(self, text_str):
+        pass
+
+    def spacy_pos_tags(self, text_str):
+        return [(token.text, token.pos_) for token in self.sent_detector(text_str)]
 
     @staticmethod
     def get_token_offsets(tags, sentence_str, text_str, sent_offset):
@@ -51,8 +65,14 @@ class TokenizedText:
         for sentnum, sentence_str in enumerate(detected_sentences):
             sentence_str = re.sub("``", "\"", sentence_str)
             sentence_str = re.sub("''", "\"", sentence_str)
-            tokens = word_tokenize(sentence_str)
-            tags = nltk.pos_tag(tokens)
+            if self.lang == "en":
+                tokens = word_tokenize(sentence_str)
+                tags = nltk.pos_tag(tokens)
+            elif self.lang == "da":
+                tags = self.spacy_pos_tags(sentence_str)
+
+
+
             tags = [("\"", "\"") if tg[0] == "''" or tg[0] == "``" else tg for tg in tags]
             token_offsets = self.get_token_offsets(tags, sentence_str, text_str, sent_offset)
             token_list = [Token(token=tags[i][0], postag=tags[i][1], beg_offset=token_offsets[i][0],
